@@ -1,11 +1,19 @@
-FROM ubuntu:14.04.2
+FROM debian:jessie
 
-MAINTAINER support@shiyanlou.com
+# MAINTAINER Jo Shields <jo.shields@xamarin.com>
+# MAINTAINER Alexander Köplinger <alkpli@microsoft.com>
 
-RUN useradd -m trylab
+# based on dockerfile by Michael Friis <friism@gmail.com>
 
-USER trylab
+ENV MONO_VERSION 5.0.0.100
 
-WORKDIR /home/trylab
+RUN apt-get update \
+  && apt-get install -y curl \
+  && rm -rf /var/lib/apt/lists/*
 
-CMD echo "shiyanlou trylab." | wc -
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+
+RUN echo "deb http://download.mono-project.com/repo/debian jessie/snapshots/$MONO_VERSION main" > /etc/apt/sources.list.d/mono-official.list \
+  && apt-get update \
+  && apt-get install -y binutils mono-devel ca-certificates-mono fsharp mono-vbnc nuget referenceassemblies-pcl \
+  && rm -rf /var/lib/apt/lists/* /tmp/*
